@@ -3,6 +3,7 @@ package com.tka.DAO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -20,12 +21,62 @@ public class CarShowroomManagementSystem {
 
 		
 		
+        
+        
 		CarShowroomManagementSystem cms = new CarShowroomManagementSystem();
-		cms.joinTables();
+		//cms.joinTables();
 		//cms.deleteRecord();
 		//cms.updateRecord();
 		//cms.insertRecord();
+		cms.menu();
+		
+	}
+	
+	
+	public void menu() {
+		
+		System.out.println();
+        System.out.println("======= *** WELCOME TO CAR SHOWROOM MANAGEMENT SYSTEM *** =======");
+        System.out.println();
+        System.out.println("==================** ENTER YOUR CHOICE *** ======================");
+        System.out.println();
+        System.out.println("1]. SEE SHOWROOM \t\t\t 2]. DELETE RECORD FROM SHOWROOM");
+        System.out.println("3]. UPDATE SHOWROOM RECORD\t\t 4]. INSERT RECORD IN SHOWROOM");
+        System.out.println();
+        System.out.println("================== *** ENTER 0 TO EXIT *** =======================");
+		
+		CarShowroomManagementSystem cms = new CarShowroomManagementSystem();
 
+		Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+       
+		
+        switch(choice) {
+        
+        case 1:
+        	cms.joinTables();
+        	break;
+        	
+        case 2:
+        	cms.deleteRecord();
+        	break;
+        	
+        case 3:
+        	cms.updateRecord();
+        	break;
+        	
+        case 4:
+        	cms.insertRecord();
+        	break;
+        	
+        case 0:
+        	break;
+        default:
+        	System.out.println("Enter valid choice: ");
+        }
+		
+
+		
 	}
 	
 	
@@ -33,11 +84,13 @@ public class CarShowroomManagementSystem {
 	
 	public void joinTables() {
 		
+		
 		Configuration configuration = new Configuration();
 		configuration.configure();
 		configuration.addAnnotatedClass(ShowroomA.class);
 		configuration.addAnnotatedClass(ShowroomB.class);
 
+		
 		SessionFactory sessionFactory = configuration.buildSessionFactory();
 		Session session = sessionFactory.openSession();
 
@@ -57,6 +110,8 @@ public class CarShowroomManagementSystem {
 		for (Object[] array : list) {
 			System.out.println(Arrays.toString(array));
 		}	
+		
+		menu();
 	}
 	
 	
@@ -72,8 +127,14 @@ public class CarShowroomManagementSystem {
 		Session session = sessionFactory.openSession();
 
 		
-		Query<ShowroomA> query = session.createQuery("delete from ShowroomA where id=:id");
-		query.setParameter("id",16);
+		Query<ShowroomA> query = session.createQuery("delete from ShowroomA where showNo=:showNo");
+		
+		
+		System.out.print("Enter show number: ");
+		Scanner scanner = new Scanner(System.in);
+		int showNo = scanner.nextInt();
+		
+		query.setParameter("showNo",showNo);
 		
 		
 		Transaction tx = session.beginTransaction();
@@ -83,10 +144,11 @@ public class CarShowroomManagementSystem {
 		
 		
 		System.out.println();
-	
+		
 		System.out.println("Number Of Records Deleted From ShowroomA : " + count);
 		
 		tx.commit();
+		menu();
 	}
 	
 	
@@ -106,10 +168,22 @@ public class CarShowroomManagementSystem {
 		
 		Query query = session.createQuery("update ShowroomA set showName=:showName, totalCars=:totalCars where showNo=:showNo");
 		
+		System.out.print("Enter show name: ");
+		Scanner scanner = new Scanner(System.in);
+		String showName = scanner.nextLine();
 		
-		query.setParameter("showName", "Mukesh Motors");
-		query.setParameter("totalCars",58);
-		query.setParameter("showNo", 13);
+		
+		System.out.print("Enter total cars: ");
+		Scanner scanner1 = new Scanner(System.in);
+		int totalCars = scanner1.nextInt();
+		
+		System.out.print("Enter show number: ");
+		Scanner scanner3 = new Scanner(System.in);
+		int showNo = scanner3.nextInt();
+		
+		query.setParameter("showName", showName);
+		query.setParameter("totalCars",totalCars);
+		query.setParameter("showNo", showNo);
 		
 		
 		Transaction tx = session.beginTransaction();
@@ -119,9 +193,10 @@ public class CarShowroomManagementSystem {
 		
 		
 		tx.commit();
+		System.out.println();
 		System.out.println(count + " : Records affected ");
 		session.close();
-		
+		menu();
 	}
 	
 	
@@ -139,8 +214,25 @@ public class CarShowroomManagementSystem {
 		Session session = sessionFactory.openSession();
 
 		
-		Query query = session.createQuery("insert into ShowroomA(showNo,showName,totalCars)values(16,'Yogesh Motors',77)");
+		Query query = session.createQuery("insert into ShowroomA(showNo,showName,totalCars)values(:showNo,:showName,:totalCars)");
 		
+		
+		
+		System.out.print("Enter show number: ");
+		Scanner scanner = new Scanner(System.in);
+		int showNo = scanner.nextInt();
+		
+		System.out.print("Enter show name: ");
+		Scanner scanner1 = new Scanner(System.in);
+		String showName = scanner1.nextLine();
+		
+		System.out.print("Enter total cars: ");
+		Scanner scanner3 = new Scanner(System.in);
+		int totalCars = scanner3.nextInt();
+		
+		query.setParameter("showName", showName);
+		query.setParameter("totalCars",totalCars);
+		query.setParameter("showNo", showNo);
 		
 		
 		Transaction tx = session.beginTransaction();
@@ -148,11 +240,13 @@ public class CarShowroomManagementSystem {
 		
 		int count = query.executeUpdate();
 		
-		
+		System.out.println();
 		System.out.println(count + " : Records are inserted successfully !!!"  );
 		
 		tx.commit();
 		session.close();
+		
+		menu();
 	}
 	
 
